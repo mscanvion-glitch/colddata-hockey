@@ -1,166 +1,105 @@
 <!DOCTYPE html>
-<html lang="fr" class="dark">
+<html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <meta name="theme-color" content="#030712">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ColdData Hockey</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-[#030712] text-gray-100 min-h-screen pb-16 font-sans">
-
-  <div class="max-w-md mx-auto px-4 pt-6 space-y-5">
-
-    <!-- En-tête -->
-    <div class="flex items-center justify-between border-b border-gray-800/80 pb-3">
-      <div>
-        <h1 class="text-lg font-bold tracking-tight text-white flex items-center gap-2">
-          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-          ColdData Scanner
-        </h1>
-        <p class="text-[11px] text-gray-500" id="last-update">Chargement...</p>
-      </div>
-      <button onclick="loadReport()" class="p-2 bg-gray-900 border border-gray-800 rounded-lg text-gray-400 active:scale-95 text-xs">
-        ↻
-      </button>
+<body class="bg-gray-950 text-gray-100 min-h-screen p-4 font-sans">
+  <div class="max-w-md mx-auto space-y-4">
+    
+    <div class="flex justify-between items-center border-b border-gray-800 pb-3">
+      <h1 class="text-base font-bold text-white">ColdData Hockey</h1>
+      <span class="text-xs text-emerald-400" id="update-time">Chargement...</span>
     </div>
 
-    <!-- Soldes & Conversion USD -> EUR -->
-    <div class="bg-gray-900/60 border border-gray-800/80 rounded-xl p-3.5 space-y-2.5">
-      <div class="flex justify-between items-center text-xs text-gray-400 font-medium">
-        <span>SOLDE CONSOLIDÉ</span>
-        <span class="text-emerald-400 font-mono font-bold" id="total-bankroll">-- €</span>
-      </div>
-      <div class="grid grid-cols-2 gap-2">
-        <div class="bg-gray-950/80 border border-gray-800/60 rounded-lg p-2">
-          <label class="text-[9px] text-gray-500 uppercase block font-mono">Winamax (€)</label>
-          <input type="number" id="winamax-val" value="100" oninput="saveAndRefresh()" class="w-full bg-transparent text-sm font-semibold text-white focus:outline-none">
-        </div>
-        <div class="bg-gray-950/80 border border-gray-800/60 rounded-lg p-2">
-          <label class="text-[9px] text-gray-500 uppercase block font-mono">Polymarket ($)</label>
-          <input type="number" id="poly-val" value="110" oninput="saveAndRefresh()" class="w-full bg-transparent text-sm font-semibold text-white focus:outline-none">
-        </div>
-      </div>
+    <!-- Onglets -->
+    <div class="flex bg-gray-900 rounded-lg p-1 text-xs font-semibold">
+      <button onclick="showTab('valid')" id="btn-valid" class="flex-1 py-2 text-center rounded bg-emerald-600 text-white">Validés</button>
+      <button onclick="showTab('rejected')" id="btn-rejected" class="flex-1 py-2 text-center rounded text-gray-400">Écartés</button>
     </div>
 
-    <!-- Navigation par Onglets -->
-    <div class="flex border-b border-gray-800 text-xs font-semibold">
-      <button onclick="switchTab('valid')" id="tab-valid" class="flex-1 py-2 text-center text-emerald-400 border-b-2 border-emerald-400">
-        VALIDÉS (<span id="count-valid">0</span>)
-      </button>
-      <button onclick="switchTab('rejected')" id="tab-rejected" class="flex-1 py-2 text-center text-gray-500">
-        ÉCARTÉS (<span id="count-rejected">0</span>)
-      </button>
-      <button onclick="switchTab('history')" id="tab-history" class="flex-1 py-2 text-center text-gray-500">
-        HISTORIQUE
-      </button>
+    <!-- Contenu Validés -->
+    <div id="tab-content-valid" class="space-y-3">
+      <div id="list-valid" class="space-y-2"></div>
     </div>
 
-    <!-- VUE 1 : Validés -->
-    <div id="view-valid" class="space-y-3">
-      <div id="valid-cards" class="space-y-3"></div>
-    </div>
-
-    <!-- VUE 2 : Écartés (Rejetés) -->
-    <div id="view-rejected" class="space-y-2 hidden">
-      <div id="rejected-cards" class="space-y-2"></div>
-    </div>
-
-    <!-- VUE 3 : Historique & Taux de réussite -->
-    <div id="view-history" class="space-y-4 hidden">
-      <div class="grid grid-cols-3 gap-2 bg-gray-900/40 p-3 rounded-xl border border-gray-800 text-center font-mono">
-        <div>
-          <span class="text-[9px] text-gray-500 block">PARIS</span>
-          <span class="text-sm font-bold text-white" id="stat-total">0</span>
-        </div>
-        <div>
-          <span class="text-[9px] text-gray-500 block">RÉUSSITE</span>
-          <span class="text-sm font-bold text-emerald-400" id="stat-winrate">0 %</span>
-        </div>
-        <div>
-          <span class="text-[9px] text-gray-500 block">P/L NET</span>
-          <span class="text-sm font-bold text-white" id="stat-profit">0,00 €</span>
-        </div>
-      </div>
-      <div id="history-items" class="space-y-2 text-xs"></div>
+    <!-- Contenu Écartés -->
+    <div id="tab-content-rejected" class="space-y-3 hidden">
+      <div id="list-rejected" class="space-y-2"></div>
     </div>
 
   </div>
 
   <script>
-    const USD_TO_EUR = 0.92;
-    let currentData = null;
-    let historyData = JSON.parse(localStorage.getItem('colddata_history') || '[]');
-
-    function switchTab(tab) {
-      ['valid', 'rejected', 'history'].forEach(t => {
-        document.getElementById('view-' + t).classList.add('hidden');
-        document.getElementById('tab-' + t).className = "flex-1 py-2 text-center text-gray-500";
-      });
-      document.getElementById('view-' + tab).classList.remove('hidden');
-      document.getElementById('tab-' + tab).className = "flex-1 py-2 text-center text-emerald-400 border-b-2 border-emerald-400";
-    }
-
-    function saveAndRefresh() {
-      const w = parseFloat(document.getElementById('winamax-val').value) || 0;
-      const p = parseFloat(document.getElementById('poly-val').value) || 0;
-      localStorage.setItem('colddata_w', w);
-      localStorage.setItem('colddata_p', p);
-      
-      const totalEur = w + (p * USD_TO_EUR);
-      document.getElementById('total-bankroll').innerText = totalEur.toFixed(2) + " €";
-      if (currentData) renderAll(currentData);
-    }
-
-async function loadReport() {
-      try {
-        // Remplace par l'URL directe de ton fichier data.json sur ton GitHub Pages
-        const res = await fetch('https://mscandion-glitch.github.io/colddata-hockey/data.json?t=' + Date.now());
-        const data = await res.json();
-        currentData = data;
-        document.getElementById('last-update').innerText = "Scan : " + data.updated_at;
-        renderAll(data);
-      } catch (err) {
-        document.getElementById('valid-cards').innerHTML = `<p class="text-xs text-red-400 text-center py-4">Erreur de chargement des données.</p>`;
+    function showTab(tab) {
+      if (tab === 'valid') {
+        document.getElementById('tab-content-valid').classList.remove('hidden');
+        document.getElementById('tab-content-rejected').classList.add('hidden');
+        document.getElementById('btn-valid').className = "flex-1 py-2 text-center rounded bg-emerald-600 text-white";
+        document.getElementById('btn-rejected').className = "flex-1 py-2 text-center rounded text-gray-400";
+      } else {
+        document.getElementById('tab-content-rejected').classList.remove('hidden');
+        document.getElementById('tab-content-valid').classList.add('hidden');
+        document.getElementById('btn-rejected').className = "flex-1 py-2 text-center rounded bg-emerald-600 text-white";
+        document.getElementById('btn-valid').className = "flex-1 py-2 text-center rounded text-gray-400";
       }
     }
 
-    function renderAll(data) {
-      const validContainer = document.getElementById('valid-cards');
-      const rejectedContainer = document.getElementById('rejected-cards');
-      validContainer.innerHTML = '';
-      rejectedContainer.innerHTML = '';
-
-      const w = parseFloat(document.getElementById('winamax-val').value) || 0;
-      const p = parseFloat(document.getElementById('poly-val').value) || 0;
-
-      let validCount = 0;
-      let rejectedCount = 0;
-
-      data.results.forEach((m) => {
-        const isValid = m.status.includes('VALIDÉE') || m.status.includes('VALUE') || m.status.includes('MODÉRÉ');
+    async function loadData() {
+      try {
+        const res = await fetch('data.json?t=' + Date.now());
+        const data = await res.json();
         
-        if (isValid) {
-          validCount++;
-          const miseW = ((w * m.stake_pct) / 100).toFixed(2);
-          const miseP = ((p * m.stake_pct) / 100).toFixed(2);
+        document.getElementById('update-time').innerText = data.updated_at;
+        
+        const validList = document.getElementById('list-valid');
+        const rejectedList = document.getElementById('list-rejected');
+        validList.innerHTML = '';
+        rejectedList.innerHTML = '';
 
+        data.results.forEach(m => {
+          const isValid = m.status.includes('VALIDÉE') || m.status.includes('VALUE') || m.status.includes('MODÉRÉ');
+          
           const card = document.createElement('div');
-          card.className = "p-3.5 rounded-xl border bg-gray-900/60 border-emerald-500/30 space-y-2.5";
-          card.innerHTML = `
-            <div class="flex justify-between items-start">
-              <div>
-                <span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800/60">${m.league} •${m.time}</span>
-                <h3 class="text-sm font-bold text-white mt-1">${m.match}</h3>
-                <p class="text-[10px] text-gray-400">Gardien : ${m.gardien}</p>
+          card.className = "p-3 bg-gray-900 border border-gray-800 rounded-lg text-xs space-y-1";
+          
+          if (isValid) {
+            card.innerHTML = `
+              <div class="font-bold text-white flex justify-between">
+                <span>${m.match}</span>
+                <span class="text-emerald-400">@${m.cote}</span>
               </div>
-              <div class="text-right font-mono">
-                <span class="text-xs font-bold text-emerald-400">@${m.cote.toFixed(2)}</span>
-                <p class="text-[9px] text-gray-500">${m.score}/100</p>
+              <div class="text-gray-400">Statut : <span class="text-emerald-300">${m.status}</span></div>
+              <div class="text-gray-400">Score : ${m.score}/100 | Gardien : ${m.gardien}</div>
+            `;
+            validList.appendChild(card);
+          } else {
+            card.innerHTML = `
+              <div class="font-bold text-gray-300 flex justify-between">
+                <span>${m.match}</span>
+                <span class="text-gray-500">@${m.cote}</span>
               </div>
-            </div>
-            <div class="pt-2 border-t border-gray-800/80 flex justify-between items-center text-xs">
-              <span class="text-emerald-400 text-[11px]">Mise (${m.stake_pct}%) :</span>
-              <span class="font-mono text-white text-[11px] font-semibold">${miseW} € (W) / ${miseP}$ (P)</span>
-            </div>
-            <button onclick
+              <div class="text-red-400">Motifs : ${m.motifs.join(', ')}</div>
+            `;
+            rejectedList.appendChild(card);
+          }
+        });
+
+        if (validList.children.length === 0) {
+          validList.innerHTML = '<p class="text-xs text-gray-500 text-center py-4">Aucun match validé pour le moment.</p>';
+        }
+        if (rejectedList.children.length === 0) {
+          rejectedList.innerHTML = '<p class="text-xs text-gray-500 text-center py-4">Aucun match écarté.</p>';
+        }
+
+      } catch (e) {
+        document.getElementById('update-time').innerText = "Erreur de chargement";
+      }
+    }
+
+    loadData();
+  </script>
+</body>
+</html>

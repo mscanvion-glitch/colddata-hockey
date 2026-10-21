@@ -8,7 +8,7 @@ CORRIDOR_MIN = 1.25
 CORRIDOR_MAX = 1.55
 SEUIL_TIER_1 = 85.0
 SEUIL_TIER_2 = 82.0
-SEUIL_TIER_3 = 80.0
+SEUIL_TIER_3 = 79.0
 
 def send_telegram_alert(message):
     token = os.getenv("TELEGRAM_TOKEN")

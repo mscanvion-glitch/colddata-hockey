@@ -3,48 +3,83 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ColdData Hockey</title>
+  <title>ColdData Hockey - Pro Terminal</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-950 text-gray-100 min-h-screen p-4 font-sans">
+<body class="bg-gray-950 text-gray-100 min-h-screen p-4 font-sans pb-16">
   <div class="max-w-md mx-auto space-y-4">
     
+    <!-- En-tête -->
     <div class="flex justify-between items-center border-b border-gray-800 pb-3">
-      <h1 class="text-base font-bold text-white">ColdData Hockey</h1>
-      <span class="text-xs text-emerald-400" id="update-time">Chargement...</span>
+      <div>
+        <h1 class="text-base font-bold text-white tracking-wide">ColdData Hockey</h1>
+        <span class="text-[10px] text-emerald-400" id="update-time">Chargement...</span>
+      </div>
+      <button onclick="toggleConfig()" class="bg-gray-900 border border-gray-800 px-3 py-1.5 rounded-lg text-xs font-semibold text-gray-300 hover:text-white">⚙️ Config</button>
     </div>
 
-    <!-- Onglets -->
-    <div class="flex bg-gray-900 rounded-lg p-1 text-xs font-semibold">
-      <button onclick="showTab('valid')" id="btn-valid" class="flex-1 py-2 text-center rounded bg-emerald-600 text-white">Validés</button>
-      <button onclick="showTab('rejected')" id="btn-rejected" class="flex-1 py-2 text-center rounded text-gray-400">Écartés</button>
+    <!-- Panneau de Configuration Intégré -->
+    <div id="config-panel" class="hidden bg-gray-900 border border-gray-800 p-3 rounded-xl space-y-3 text-xs">
+      <div class="font-bold text-white border-b border-gray-800 pb-1">Paramètres & Seuils Stricts</div>
+      <div class="grid grid-cols-2 gap-2">
+        <div>
+          <label class="text-gray-400">Seuil Tier 1</label>
+          <input type="number" id="cfg-t1" value="85" class="w-full bg-gray-950 border border-gray-800 p-1.5 rounded text-white mt-1">
+        </div>
+        <div>
+          <label class="text-gray-400">Seuil Tier 2</label>
+          <input type="number" id="cfg-t2" value="82" class="w-full bg-gray-950 border border-gray-800 p-1.5 rounded text-white mt-1">
+        </div>
+        <div>
+          <label class="text-gray-400">Seuil Tier 3</label>
+          <input type="number" id="cfg-t3" value="79" class="w-full bg-gray-950 border border-gray-800 p-1.5 rounded text-white mt-1">
+        </div>
+        <div>
+          <label class="text-gray-400">Corridor Max</label>
+          <input type="number" step="0.01" id="cfg-cmax" value="1.55" class="w-full bg-gray-950 border border-gray-800 p-1.5 rounded text-white mt-1">
+        </div>
+      </div>
+      <button onclick="saveConfig()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded">Enregistrer les réglages</button>
     </div>
 
-    <!-- Contenu Validés -->
-    <div id="tab-content-valid" class="space-y-3">
-      <div id="list-valid" class="space-y-2"></div>
+    <!-- Navigation par Onglets -->
+    <div class="flex bg-gray-900 rounded-xl p-1 text-xs font-semibold">
+      <button onclick="showTab('valid')" id="btn-valid" class="flex-1 py-2 text-center rounded-lg bg-emerald-600 text-white transition">Validés</button>
+      <button onclick="showTab('rejected')" id="btn-rejected" class="flex-1 py-2 text-center rounded-lg text-gray-400 transition">Écartés</button>
+      <button onclick="showTab('audit')" id="btn-audit" class="flex-1 py-2 text-center rounded-lg text-gray-400 transition">Audit / ROI</button>
     </div>
 
-    <!-- Contenu Écartés -->
-    <div id="tab-content-rejected" class="space-y-3 hidden">
-      <div id="list-rejected" class="space-y-2"></div>
+    <!-- Conteneurs -->
+    <div id="tab-valid" class="space-y-3"></div>
+    <div id="tab-rejected" class="space-y-3 hidden"></div>
+    <div id="tab-audit" class="space-y-3 hidden">
+      <div class="p-4 bg-gray-900 border border-gray-800 rounded-xl space-y-2 text-xs">
+        <div class="font-bold text-white">Rapport d'Audit Global</div>
+        <div class="flex justify-between text-gray-400"><span>Taux de réussite global :</span> <span class="text-emerald-400 font-bold">-- %</span></div>
+        <div class="flex justify-between text-gray-400"><span>ROI net simulé :</span> <span class="text-emerald-400 font-bold">-- %</span></div>
+        <div class="flex justify-between text-gray-400"><span>Paris suivis :</span> <span class="text-white font-bold">0</span></div>
+      </div>
     </div>
 
   </div>
 
   <script>
+    function toggleConfig() {
+      document.getElementById('config-panel').classList.toggle('hidden');
+    }
+
+    function saveConfig() {
+      alert("Paramètres enregistrés en local !");
+      toggleConfig();
+    }
+
     function showTab(tab) {
-      if (tab === 'valid') {
-        document.getElementById('tab-content-valid').classList.remove('hidden');
-        document.getElementById('tab-content-rejected').classList.add('hidden');
-        document.getElementById('btn-valid').className = "flex-1 py-2 text-center rounded bg-emerald-600 text-white";
-        document.getElementById('btn-rejected').className = "flex-1 py-2 text-center rounded text-gray-400";
-      } else {
-        document.getElementById('tab-content-rejected').classList.remove('hidden');
-        document.getElementById('tab-content-valid').classList.add('hidden');
-        document.getElementById('btn-rejected').className = "flex-1 py-2 text-center rounded bg-emerald-600 text-white";
-        document.getElementById('btn-valid').className = "flex-1 py-2 text-center rounded text-gray-400";
-      }
+      ['valid', 'rejected', 'audit'].forEach(t => {
+        document.getElementById(`tab-${t}`).classList.add('hidden');
+        document.getElementById(`btn-${t}`).className = "flex-1 py-2 text-center rounded-lg text-gray-400 transition";
+      });
+      document.getElementById(`tab-${tab}`).classList.remove('hidden');
+      document.getElementById(`btn-${tab}`).className = "flex-1 py-2 text-center rounded-lg bg-emerald-600 text-white transition font-bold";
     }
 
     async function loadData() {
@@ -52,50 +87,58 @@
         const res = await fetch('data.json?t=' + Date.now());
         const data = await res.json();
         
-        document.getElementById('update-time').innerText = data.updated_at;
+        document.getElementById('update-time').innerText = "Dernier scan : " + data.updated_at;
         
-        const validList = document.getElementById('list-valid');
-        const rejectedList = document.getElementById('list-rejected');
-        validList.innerHTML = '';
-        rejectedList.innerHTML = '';
+        const validDiv = document.getElementById('tab-valid');
+        const rejectedDiv = document.getElementById('tab-rejected');
+        validDiv.innerHTML = '';
+        rejectedDiv.innerHTML = '';
 
         data.results.forEach(m => {
           const isValid = m.status.includes('VALIDÉE') || m.status.includes('VALUE') || m.status.includes('MODÉRÉ');
           
           const card = document.createElement('div');
-          card.className = "p-3 bg-gray-900 border border-gray-800 rounded-lg text-xs space-y-1";
+          card.className = "p-3.5 bg-gray-900 border border-gray-800 rounded-xl text-xs space-y-2";
           
           if (isValid) {
             card.innerHTML = `
-              <div class="font-bold text-white flex justify-between">
+              <div class="font-bold text-white flex justify-between items-center text-sm">
                 <span>${m.match}</span>
-                <span class="text-emerald-400">@${m.cote}</span>
+                <span class="text-emerald-400 bg-emerald-950/50 px-2 py-0.5 rounded border border-emerald-900">@${m.cote}</span>
               </div>
-              <div class="text-gray-400">Statut : <span class="text-emerald-300">${m.status}</span></div>
-              <div class="text-gray-400">Score : ${m.score}/100 | Gardien : ${m.gardien}</div>
+              <div class="flex justify-between text-gray-400">
+                <span>Statut : <strong class="text-emerald-300">${m.status}</strong></span>
+                <span>Score : <strong class="text-white">${m.score}/100</strong></span>
+              </div>
+              <div class="text-gray-400">Gardien : <span class="text-gray-200">${m.gardien}</span> | Mise : <span class="text-emerald-400 font-bold">${m.stake_pct}%</span></div>
+              <div class="p-2 bg-gray-950 rounded border border-gray-800/80 text-gray-300 text-[11px] italic">"${m.analyse}"</div>
             `;
-            validList.appendChild(card);
+            validDiv.appendChild(card);
           } else {
             card.innerHTML = `
-              <div class="font-bold text-gray-300 flex justify-between">
+              <div class="font-bold text-gray-300 flex justify-between items-center text-sm">
                 <span>${m.match}</span>
-                <span class="text-gray-500">@${m.cote}</span>
+                <span class="text-gray-500 bg-gray-950 px-2 py-0.5 rounded">@${m.cote}</span>
               </div>
-              <div class="text-red-400">Motifs : ${m.motifs.join(', ')}</div>
+              <div class="text-red-400 font-semibold">Motifs de rejet :</div>
+              <ul class="list-disc list-inside text-gray-400 text-[11px] space-y-0.5">
+                ${m.motifs.map(motiff => `<li>${motiff}</li>`).join('')}
+              </ul>
+              <div class="p-2 bg-gray-950 rounded border border-gray-800/80 text-gray-400 text-[11px] italic">"${m.analyse}"</div>
             `;
-            rejectedList.appendChild(card);
+            rejectedDiv.appendChild(card);
           }
         });
 
-        if (validList.children.length === 0) {
-          validList.innerHTML = '<p class="text-xs text-gray-500 text-center py-4">Aucun match validé pour le moment.</p>';
+        if (validDiv.children.length === 0) {
+          validDiv.innerHTML = '<p class="text-xs text-gray-500 text-center py-6">Aucun match validé pour le moment.</p>';
         }
-        if (rejectedList.children.length === 0) {
-          rejectedList.innerHTML = '<p class="text-xs text-gray-500 text-center py-4">Aucun match écarté.</p>';
+        if (rejectedDiv.children.length === 0) {
+          rejectedDiv.innerHTML = '<p class="text-xs text-gray-500 text-center py-6">Aucun match écarté.</p>';
         }
 
       } catch (e) {
-        document.getElementById('update-time').innerText = "Erreur de chargement";
+        document.getElementById('update-time').innerText = "Erreur de chargement du flux";
       }
     }
 

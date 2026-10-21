@@ -1,5 +1,5 @@
 {
-  "updated_at": "21/10/2026 21:23:57",
+  "updated_at": "21/10/2026 21:27:55",
   "total_scanned": 2,
   "results": [
     {
@@ -8,11 +8,11 @@
       "time": "23:30 UTC",
       "cote": 1.38,
       "score": 78.0,
-      "status": "SPOT MODÉRÉ (TIER 3)",
+      "status": "REJETÉ",
       "motifs": [
-        "Critères validés par scraping direct"
+        "Score insuffisant (78.0 < 79.0)"
       ],
-      "stake_pct": 5,
+      "stake_pct": 0,
       "gardien": "Confirmé officiel"
     },
     {
@@ -21,11 +21,11 @@
       "time": "23:30 UTC",
       "cote": 1.38,
       "score": 69.6,
-      "status": "SPOT MODÉRÉ (TIER 3)",
+      "status": "REJETÉ",
       "motifs": [
-        "Critères validés par scraping direct"
+        "Score insuffisant (69.6 < 79.0)"
       ],
-      "stake_pct": 5,
+      "stake_pct": 0,
       "gardien": "Confirmé officiel"
     }
   ]

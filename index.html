@@ -7,132 +7,242 @@
   <title>ColdData Hockey</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-[#030712] text-gray-100 min-h-screen pb-12 font-sans selection:bg-emerald-500/20">
+<body class="bg-[#030712] text-gray-100 min-h-screen pb-16 font-sans">
 
-  <div class="max-w-md mx-auto px-4 pt-6 space-y-6">
+  <div class="max-w-md mx-auto px-4 pt-6 space-y-5">
 
-    <!-- Header & Horodatage -->
-    <div class="flex items-center justify-between border-b border-gray-800/80 pb-4">
+    <!-- En-tête -->
+    <div class="flex items-center justify-between border-b border-gray-800/80 pb-3">
       <div>
-        <h1 class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
-          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+        <h1 class="text-lg font-bold tracking-tight text-white flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
           ColdData Scanner
         </h1>
-        <p class="text-xs text-gray-500 mt-0.5" id="last-update">Chargement du flux...</p>
+        <p class="text-[11px] text-gray-500" id="last-update">Chargement...</p>
       </div>
-      <button onclick="loadReport()" class="p-2.5 bg-gray-900 border border-gray-800 rounded-xl text-gray-400 hover:text-white active:scale-95 transition">
+      <button onclick="loadReport()" class="p-2 bg-gray-900 border border-gray-800 rounded-lg text-gray-400 active:scale-95 text-xs">
         ↻
       </button>
     </div>
 
-    <!-- Bankroll Management -->
-    <div class="bg-gray-900/60 border border-gray-800/80 rounded-2xl p-4 shadow-xl backdrop-blur-sm space-y-3">
+    <!-- Soldes & Conversion USD -> EUR -->
+    <div class="bg-gray-900/60 border border-gray-800/80 rounded-xl p-3.5 space-y-2.5">
       <div class="flex justify-between items-center text-xs text-gray-400 font-medium">
-        <span>SOLDES ACTUELS</span>
-        <span class="text-emerald-400" id="total-bankroll">-- €</span>
+        <span>SOLDE CONSOLIDÉ</span>
+        <span class="text-emerald-400 font-mono font-bold" id="total-bankroll">-- €</span>
       </div>
-      <div class="grid grid-cols-2 gap-3">
-        <div class="bg-gray-950/70 border border-gray-800/50 rounded-xl p-2.5">
-          <label class="text-[10px] text-gray-500 block uppercase font-mono">Winamax (€)</label>
-          <input type="number" id="winamax-val" value="386" oninput="saveAndRefresh()" class="w-full bg-transparent text-sm font-semibold text-white focus:outline-none">
+      <div class="grid grid-cols-2 gap-2">
+        <div class="bg-gray-950/80 border border-gray-800/60 rounded-lg p-2">
+          <label class="text-[9px] text-gray-500 uppercase block font-mono">Winamax (€)</label>
+          <input type="number" id="winamax-val" value="100" oninput="saveAndRefresh()" class="w-full bg-transparent text-sm font-semibold text-white focus:outline-none">
         </div>
-        <div class="bg-gray-950/70 border border-gray-800/50 rounded-xl p-2.5">
-          <label class="text-[10px] text-gray-500 block uppercase font-mono">Polymarket ($)</label>
-          <input type="number" id="poly-val" value="347" oninput="saveAndRefresh()" class="w-full bg-transparent text-sm font-semibold text-white focus:outline-none">
+        <div class="bg-gray-950/80 border border-gray-800/60 rounded-lg p-2">
+          <label class="text-[9px] text-gray-500 uppercase block font-mono">Polymarket ($)</label>
+          <input type="number" id="poly-val" value="110" oninput="saveAndRefresh()" class="w-full bg-transparent text-sm font-semibold text-white focus:outline-none">
         </div>
       </div>
     </div>
 
-    <!-- Feed des Matchs -->
-    <div class="space-y-4">
-      <div class="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-gray-400">
-        <span>Rapport de décision froid</span>
-        <span id="badge-count" class="bg-emerald-950 text-emerald-400 border border-emerald-800/60 px-2 py-0.5 rounded-md font-mono text-[10px]">--</span>
-      </div>
+    <!-- Navigation par Onglets -->
+    <div class="flex border-b border-gray-800 text-xs font-semibold">
+      <button onclick="switchTab('valid')" id="tab-valid" class="flex-1 py-2 text-center text-emerald-400 border-b-2 border-emerald-400">
+        VALIDÉS (<span id="count-valid">0</span>)
+      </button>
+      <button onclick="switchTab('rejected')" id="tab-rejected" class="flex-1 py-2 text-center text-gray-500">
+        REJETÉS (<span id="count-rejected">0</span>)
+      </button>
+      <button onclick="switchTab('history')" id="tab-history" class="flex-1 py-2 text-center text-gray-500">
+        HISTORIQUE
+      </button>
+    </div>
 
-      <div id="cards-container" class="space-y-3">
-        <p class="text-xs text-gray-500 text-center py-6">Lecture des données...</p>
+    <!-- VUE 1 : Matchs Validés -->
+    <div id="view-valid" class="space-y-3">
+      <div id="valid-cards" class="space-y-3"></div>
+    </div>
+
+    <!-- VUE 2 : Matchs Rejetés -->
+    <div id="view-rejected" class="space-y-2 hidden">
+      <div id="rejected-cards" class="space-y-2"></div>
+    </div>
+
+    <!-- VUE 3 : Historique & Taux de réussite -->
+    <div id="view-history" class="space-y-4 hidden">
+      <div class="grid grid-cols-3 gap-2 bg-gray-900/40 p-3 rounded-xl border border-gray-800 text-center font-mono">
+        <div>
+          <span class="text-[9px] text-gray-500 block">PARIS</span>
+          <span class="text-sm font-bold text-white" id="stat-total">0</span>
+        </div>
+        <div>
+          <span class="text-[9px] text-gray-500 block">RÉUSSITE</span>
+          <span class="text-sm font-bold text-emerald-400" id="stat-winrate">0 %</span>
+        </div>
+        <div>
+          <span class="text-[9px] text-gray-500 block">P/L NET</span>
+          <span class="text-sm font-bold text-white" id="stat-profit">0,00 €</span>
+        </div>
       </div>
+      <div id="history-items" class="space-y-2 text-xs"></div>
     </div>
 
   </div>
 
   <script>
+    const USD_TO_EUR = 0.92; // Taux de conversion de référence
     let currentData = null;
+    let historyData = JSON.parse(localStorage.getItem('colddata_history') || '[]');
+
+    function switchTab(tab) {
+      ['valid', 'rejected', 'history'].forEach(t => {
+        document.getElementById('view-' + t).classList.add('hidden');
+        document.getElementById('tab-' + t).className = "flex-1 py-2 text-center text-gray-500";
+      });
+      document.getElementById('view-' + tab).classList.remove('hidden');
+      document.getElementById('tab-' + tab).className = "flex-1 py-2 text-center text-emerald-400 border-b-2 border-emerald-400";
+    }
 
     function saveAndRefresh() {
       const w = parseFloat(document.getElementById('winamax-val').value) || 0;
       const p = parseFloat(document.getElementById('poly-val').value) || 0;
       localStorage.setItem('colddata_w', w);
       localStorage.setItem('colddata_p', p);
-      document.getElementById('total-bankroll').innerText = (w + p).toFixed(2) + " € (consolidé)";
-      if (currentData) renderCards(currentData);
+      
+      const totalEur = w + (p * USD_TO_EUR);
+      document.getElementById('total-bankroll').innerText = totalEur.toFixed(2) + " €";
+      if (currentData) renderAll(currentData);
     }
 
     async function loadReport() {
       try {
         const res = await fetch('data.json?t=' + Date.now());
-        if (!res.ok) throw new Error("Fichier introuvable");
         const data = await res.json();
         currentData = data;
-        document.getElementById('last-update').innerText = "Dernier scan : " + data.updated_at;
-        document.getElementById('badge-count').innerText = data.total_scanned + " MATCHS";
-        renderCards(data);
+        document.getElementById('last-update').innerText = "Scan : " + data.updated_at;
+        renderAll(data);
       } catch (err) {
-        document.getElementById('cards-container').innerHTML = `
-          <div class="p-4 bg-red-950/20 border border-red-900/40 rounded-xl text-center text-xs text-red-400">
-            En attente du premier scan GitHub Actions.<br>Déclenche le workflow dans l'onglet Actions.
-          </div>`;
+        document.getElementById('valid-cards').innerHTML = `<p class="text-xs text-red-400 text-center py-4">data.json introuvable.</p>`;
       }
     }
 
-    function renderCards(data) {
-      const container = document.getElementById('cards-container');
-      container.innerHTML = '';
+    function renderAll(data) {
+      const validContainer = document.getElementById('valid-cards');
+      const rejectedContainer = document.getElementById('rejected-cards');
+      validContainer.innerHTML = '';
+      rejectedContainer.innerHTML = '';
 
       const w = parseFloat(document.getElementById('winamax-val').value) || 0;
       const p = parseFloat(document.getElementById('poly-val').value) || 0;
 
-      data.results.forEach(m => {
-        const isOk = m.status.includes('VALIDÉE') || m.status.includes('VALUE') || m.status.includes('MODÉRÉ');
+      let validCount = 0;
+      let rejectedCount = 0;
+
+      data.results.forEach((m, idx) => {
+        const isValid = m.status.includes('VALIDÉE') || m.status.includes('VALUE') || m.status.includes('MODÉRÉ');
         
-        let card = document.createElement('div');
-        card.className = `p-4 rounded-2xl border transition ${
-          isOk ? 'bg-gradient-to-b from-gray-900 to-gray-950 border-emerald-500/40 shadow-lg shadow-emerald-950/20' : 'bg-gray-950/40 border-gray-900 opacity-60'
-        }`;
+        if (isValid) {
+          validCount++;
+          const miseW = ((w * m.stake_pct) / 100).toFixed(2);
+          const miseP = ((p * m.stake_pct) / 100).toFixed(2);
 
-        let miseW = ((w * m.stake_pct) / 100).toFixed(2);
-        let miseP = ((p * m.stake_pct) / 100).toFixed(2);
-
-        card.innerHTML = `
-          <div class="flex items-start justify-between">
-            <div>
-              <span class="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded ${isOk ? 'bg-emerald-950 text-emerald-400 border border-emerald-800/60' : 'bg-gray-800 text-gray-400'}">${m.league} • ${m.time}</span>
-              <h3 class="text-sm font-bold text-white mt-1.5">${m.match}</h3>
-              <p class="text-[11px] text-gray-400 mt-0.5">Gardien : ${m.gardien}</p>
+          const card = document.createElement('div');
+          card.className = "p-3.5 rounded-xl border bg-gray-900/60 border-emerald-500/30 space-y-2.5";
+          card.innerHTML = `
+            <div class="flex justify-between items-start">
+              <div>
+                <span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800/60">${m.league} • ${m.time}</span>
+                <h3 class="text-sm font-bold text-white mt-1">${m.match}</h3>
+                <p class="text-[10px] text-gray-400">Gardien : ${m.gardien}</p>
+              </div>
+              <div class="text-right font-mono">
+                <span class="text-xs font-bold text-emerald-400">@${m.cote.toFixed(2)}</span>
+                <p class="text-[9px] text-gray-500">${m.score.toFixed(1)}/100</p>
+              </div>
             </div>
-            <div class="text-right">
-              <span class="text-xs font-mono font-bold ${isOk ? 'text-emerald-400' : 'text-gray-500'}">@${m.cote.toFixed(2)}</span>
-              <p class="text-[10px] text-gray-500 font-mono mt-0.5">${m.score > 0 ? m.score.toFixed(1) + '/100' : 'ÉLIMINÉ'}</p>
+            <div class="pt-2 border-t border-gray-800/80 flex justify-between items-center text-xs">
+              <span class="text-emerald-400 text-[11px]">Mise (${m.stake_pct}%) :</span>
+              <span class="font-mono text-white text-[11px] font-semibold">${miseW} € (W) / ${miseP} $ (P)</span>
             </div>
-          </div>
-
-          ${isOk ? `
-            <div class="mt-3 pt-3 border-t border-gray-800/80 flex items-center justify-between text-xs">
-              <span class="text-emerald-400 font-medium">Mise conseillée (${m.stake_pct}%) :</span>
-              <span class="font-mono text-white font-semibold">${miseW} € (W) / ${miseP}$ (P)</span>
+            <button onclick="logBet('${m.match.replace(/'/g, "\\'")}', ${m.cote}, ${miseW})" class="w-full py-1 bg-gray-800 hover:bg-gray-700 text-gray-300 text-[10px] rounded font-medium transition">
+              + Ajouter à l'historique
+            </button>
+          `;
+          validContainer.appendChild(card);
+        } else {
+          rejectedCount++;
+          const card = document.createElement('div');
+          card.className = "p-2.5 rounded-lg border bg-gray-950/40 border-gray-900 opacity-70 text-xs";
+          card.innerHTML = `
+            <div class="flex justify-between items-center">
+              <span class="font-bold text-gray-300 text-[11px]">${m.match}</span>
+              <span class="text-[10px] font-mono text-gray-500">@${m.cote.toFixed(2)}</span>
             </div>
-          ` : `
-            <div class="mt-2.5 pt-2 border-t border-gray-900 text-[11px] text-red-400/80 space-y-0.5">
+            <div class="mt-1 text-[10px] text-red-400/80 space-y-0.5">
               ${m.motifs.map(mot => `<div>• ${mot}</div>`).join('')}
             </div>
-          `}
+          `;
+          rejectedContainer.appendChild(card);
+        }
+      });
+
+      document.getElementById('count-valid').innerText = validCount;
+      document.getElementById('count-rejected').innerText = rejectedCount;
+      renderHistory();
+    }
+
+    function logBet(match, cote, mise) {
+      historyData.unshift({ id: Date.now(), match, cote, mise: parseFloat(mise), result: 'pending' });
+      localStorage.setItem('colddata_history', JSON.stringify(historyData));
+      renderHistory();
+      switchTab('history');
+    }
+
+    function resolveBet(id, status) {
+      const bet = historyData.find(b => b.id === id);
+      if (bet) {
+        bet.result = status;
+        localStorage.setItem('colddata_history', JSON.stringify(historyData));
+        renderHistory();
+      }
+    }
+
+    function renderHistory() {
+      const container = document.getElementById('history-items');
+      container.innerHTML = '';
+
+      let settled = historyData.filter(b => b.result !== 'pending');
+      let wins = settled.filter(b => b.result === 'win').length;
+      let profit = 0;
+
+      settled.forEach(b => {
+        if (b.result === 'win') profit += (b.mise * (b.cote - 1));
+        if (b.result === 'loss') profit -= b.mise;
+      });
+
+      document.getElementById('stat-total').innerText = historyData.length;
+      document.getElementById('stat-winrate').innerText = settled.length ? ((wins / settled.length) * 100).toFixed(0) + " %" : "0 %";
+      document.getElementById('stat-profit').innerText = (profit >= 0 ? "+" : "") + profit.toFixed(2) + " €";
+
+      historyData.forEach(b => {
+        const item = document.createElement('div');
+        item.className = "p-2 bg-gray-900/60 border border-gray-800 rounded-lg flex justify-between items-center";
+        item.innerHTML = `
+          <div>
+            <div class="font-bold text-white text-[11px]">${b.match}</div>
+            <div class="text-[9px] text-gray-500 font-mono">Mise: ${b.mise} € • Cote: @${b.cote}</div>
+          </div>
+          <div class="flex items-center gap-1 font-mono text-[10px]">
+            ${b.result === 'pending' ? `
+              <button onclick="resolveBet(${b.id}, 'win')" class="px-2 py-0.5 bg-emerald-950 text-emerald-400 border border-emerald-800 rounded">G</button>
+              <button onclick="resolveBet(${b.id}, 'loss')" class="px-2 py-0.5 bg-red-950 text-red-400 border border-red-800 rounded">P</button>
+            ` : `
+              <span class="${b.result === 'win' ? 'text-emerald-400' : 'text-red-400'} font-bold uppercase">${b.result}</span>
+            `}
+          </div>
         `;
-        container.appendChild(card);
+        container.appendChild(item);
       });
     }
 
-    // Initialisation
     const savedW = localStorage.getItem('colddata_w');
     const savedP = localStorage.getItem('colddata_p');
     if (savedW) document.getElementById('winamax-val').value = savedW;

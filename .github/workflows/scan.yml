@@ -2,6 +2,7 @@ name: ColdData Hockey Auto-Scanner
 
 on:
   schedule:
+    # Plages optimisées : matin Europe, fin d'après-midi et fenêtre critique gardiens NHL (UTC)
     - cron: '30 6,9,13,14,15,17,18,19,20,21,22,23 * * *'
   workflow_dispatch:
 
@@ -26,6 +27,8 @@ jobs:
       - name: Exécution du moteur d'analyse
         env:
           ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: python engine.py
 
       - name: Publication automatique du rapport data.json

@@ -28,7 +28,7 @@
       </button>
     </div>
 
-    <!-- Panneau de Configuration (Glassmorphism) -->
+    <!-- Panneau de Configuration -->
     <div id="config-panel" class="hidden bg-slate-900/90 backdrop-blur-xl border border-slate-800 p-4 rounded-2xl space-y-3 shadow-2xl transition-all">
       <div class="flex justify-between items-center border-b border-slate-800 pb-2">
         <span class="text-xs font-bold text-white uppercase tracking-wider">Paramètres & Seuils Stricts</span>
@@ -55,7 +55,7 @@
       <button onclick="saveConfig()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2.5 rounded-xl transition shadow-lg shadow-emerald-900/20 text-xs">Sauvegarder les modifications</button>
     </div>
 
-    <!-- Navigation par Onglets (Design Grille Pro) -->
+    <!-- Navigation par Onglets -->
     <div class="grid grid-cols-2 gap-1.5 bg-slate-900/80 p-1.5 rounded-2xl border border-slate-800/80 text-xs font-medium">
       <button onclick="switchTab('valid')" id="btn-valid" class="py-2.5 text-center rounded-xl bg-emerald-600 text-white shadow-md transition">Validés</button>
       <button onclick="switchTab('rejected')" id="btn-rejected" class="py-2.5 text-center rounded-xl text-slate-400 hover:text-white transition">Écartés</button>
@@ -67,16 +67,15 @@
     <div id="tab-valid" class="space-y-3"></div>
     <div id="tab-rejected" class="space-y-3 hidden"></div>
     
-    <!-- Calendrier J+1 -->
+    <!-- Calendrier J+1 Classique -->
     <div id="tab-calendar" class="space-y-3 hidden">
-      <div class="bg-slate-900/80 border border-slate-800/80 p-4 rounded-2xl space-y-2.5 shadow-xl">
-        <div class="flex justify-between items-center text-xs font-bold text-white">
-          <span>📅 Anticipation & Flux J+1</span>
-          <span class="text-emerald-400 bg-emerald-950/60 border border-emerald-900/50 px-2 py-0.5 rounded-full text-[10px]">Actif</span>
+      <div class="bg-slate-900/80 border border-slate-800/80 p-4 rounded-2xl space-y-3 shadow-xl">
+        <div class="flex justify-between items-center text-xs font-bold text-white border-b border-slate-800 pb-2">
+          <span>📅 Calendrier des Affiches (J+1)</span>
+          <span class="text-emerald-400 bg-emerald-950/60 border border-emerald-900/50 px-2 py-0.5 rounded-full text-[10px]">Planifié</span>
         </div>
-        <p class="text-slate-400 text-[11px] leading-relaxed">Balayage préventif des affiches du lendemain pour anticiper la fatigue, les voyages et l'alignement des gardiens.</p>
-        <div id="calendar-list" class="space-y-2 mt-2">
-          <div class="p-3 bg-slate-950/60 rounded-xl border border-slate-800 text-slate-400 text-xs text-center">Aucun match J+1 chargé dans le flux actuel.</div>
+        <div id="calendar-list" class="space-y-2">
+          <div class="p-3 bg-slate-950/60 rounded-xl border border-slate-800 text-xs text-slate-400 text-center">Chargement du calendrier...</div>
         </div>
       </div>
     </div>
@@ -132,11 +131,16 @@
         
         const validDiv = document.getElementById('tab-valid');
         const rejectedDiv = document.getElementById('tab-rejected');
+        const calendarDiv = document.getElementById('calendar-list');
+        
         validDiv.innerHTML = '';
         rejectedDiv.innerHTML = '';
+        calendarDiv.innerHTML = '';
 
+        // Injection des résultats (Validés / Écartés)
         data.results.forEach(m => {
           const isValid = m.status.includes('VALIDÉE') || m.status.includes('VALUE') || m.status.includes('MODÉRÉ');
+          const analyseText = m.analyse || 'Analyse détaillée non disponible.';
           
           const card = document.createElement('div');
           card.className = "bg-slate-900/80 backdrop-blur-md border border-slate-800/80 p-4 rounded-2xl text-xs space-y-3 shadow-xl hover:border-slate-700 transition";
@@ -145,7 +149,7 @@
             card.innerHTML = `
               <div class="flex justify-between items-start">
                 <div>
-                  <span class="text-[10px] uppercase tracking-wider text-emerald-400 font-semibold bg-emerald-950/60 px-2 py-0.5 rounded-md border border-emerald-900/50">${m.league}</span>
+                  <span class="text-[10px] uppercase tracking-wider text-emerald-400 font-semibold bg-emerald-950/60 px-2 py-0.5 rounded-md border border-emerald-900/50">${m.league || 'NHL'}</span>
                   <h3 class="font-bold text-white text-sm mt-1">${m.match}</h3>
                 </div>
                 <div class="text-right">
@@ -171,7 +175,7 @@
               </div>
 
               <div class="p-2.5 bg-slate-950/80 rounded-xl border border-slate-800/60 text-slate-300 text-[11px] italic leading-relaxed">
-                "${m.analyse}"
+                "${analyseText}"
               </div>
             `;
             validDiv.appendChild(card);
@@ -179,7 +183,7 @@
             card.innerHTML = `
               <div class="flex justify-between items-start">
                 <div>
-                  <span class="text-[10px] uppercase tracking-wider text-rose-400 font-semibold bg-rose-950/60 px-2 py-0.5 rounded-md border border-rose-900/50">${m.league}</span>
+                  <span class="text-[10px] uppercase tracking-wider text-rose-400 font-semibold bg-rose-950/60 px-2 py-0.5 rounded-md border border-rose-900/50">${m.league || 'NHL'}</span>
                   <h3 class="font-bold text-slate-200 text-sm mt-1">${m.match}</h3>
                 </div>
                 <div class="text-right">
@@ -196,15 +200,35 @@
               </div>
 
               <div class="p-2.5 bg-slate-950/80 rounded-xl border border-slate-800/60 text-slate-400 text-[11px] italic leading-relaxed">
-                "${m.analyse}"
+                "${analyseText}"
               </div>
             `;
             rejectedDiv.appendChild(card);
           }
         });
 
+        // Injection du Calendrier J+1 classique
+        if (data.calendar_j1 && data.calendar_j1.length > 0) {
+          data.calendar_j1.forEach(cal => {
+            const calItem = document.createElement('div');
+            calItem.className = "p-3 bg-slate-950/60 rounded-xl border border-slate-800 flex justify-between items-center text-xs";
+            calItem.innerHTML = `
+              <div>
+                <span class="text-[9px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded font-mono">${cal.league}</span>
+                <div class="font-bold text-white mt-1">${cal.match}</div>
+              </div>
+              <div class="text-right">
+                <span class="text-emerald-400 mono text-[11px] font-semibold">${cal.time}</span>
+              </div>
+            `;
+            calendarDiv.appendChild(calItem);
+          });
+        } else {
+          calendarDiv.innerHTML = '<div class="p-3 bg-slate-950/60 rounded-xl border border-slate-800 text-xs text-slate-500 text-center">Aucun match J+1 trouvé dans le flux.</div>';
+        }
+
         if (validDiv.children.length === 0) {
-          validDiv.innerHTML = '<div class="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-6 text-center text-xs text-slate-500">Aucun match validé par le filtre strict pour le moment.</div>';
+          validDiv.innerHTML = '<div class="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-6 text-center text-xs text-slate-500">Aucun match validé pour le moment.</div>';
         }
         if (rejectedDiv.children.length === 0) {
           rejectedDiv.innerHTML = '<div class="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-6 text-center text-xs text-slate-500">Aucun match écarté pour le moment.</div>';

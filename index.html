@@ -112,15 +112,16 @@
       if (currentData) renderAll(currentData);
     }
 
-    async function loadReport() {
+async function loadReport() {
       try {
-        const res = await fetch('data.json?t=' + Date.now());
+        // Remplace par l'URL directe de ton fichier data.json sur ton GitHub Pages
+        const res = await fetch('https://mscandion-glitch.github.io/colddata-hockey/data.json?t=' + Date.now());
         const data = await res.json();
         currentData = data;
         document.getElementById('last-update').innerText = "Scan : " + data.updated_at;
         renderAll(data);
       } catch (err) {
-        document.getElementById('valid-cards').innerHTML = `<p class="text-xs text-red-400 text-center py-4">En attente de données...</p>`;
+        document.getElementById('valid-cards').innerHTML = `<p class="text-xs text-red-400 text-center py-4">Erreur de chargement des données.</p>`;
       }
     }
 

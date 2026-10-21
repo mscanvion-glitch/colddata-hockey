@@ -34,7 +34,10 @@ jobs:
         run: |
           git config --global user.name "ColdData Bot"
           git config --global user.email "bot@colddata.local"
-          git pull origin main --rebase || true
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+          git fetch origin main
+          git reset --hard origin/main
+          python engine.py
           git add data.json
           git commit -m "Auto-update ColdData report [skip ci]" || exit 0
           git push origin main

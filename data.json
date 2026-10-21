@@ -1,0 +1,28 @@
+{
+  "updated_at": "21/10/2026 18:31:30",
+  "total_scanned": 2,
+  "results": [
+    {
+      "match": "Sabres vs Flyers",
+      "league": "NHL",
+      "time": "23:30 UTC",
+      "cote": 1.42,
+      "score": 86.0,
+      "status": "PÉPITE VALIDÉE (TIER 1)",
+      "motifs": [],
+      "stake_pct": 15,
+      "gardien": "Gardien Annoncé"
+    },
+    {
+      "match": "Senators vs Panthers",
+      "league": "NHL",
+      "time": "23:30 UTC",
+      "cote": 1.42,
+      "score": 86.0,
+      "status": "PÉPITE VALIDÉE (TIER 1)",
+      "motifs": [],
+      "stake_pct": 15,
+      "gardien": "Gardien Annoncé"
+    }
+  ]
+}

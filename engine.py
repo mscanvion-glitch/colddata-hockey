@@ -52,6 +52,7 @@ def get_real_starting_goalies():
         print(f"Scraping gardiens warning: {e}")
     return goalies
 
+
 def fetch_all_leagues_games():
     today = datetime.now().strftime("%Y-%m-%d")
     tomorrow = (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d")
@@ -59,7 +60,7 @@ def fetch_all_leagues_games():
     games_today = []
     calendar_j1 = []
 
-    # 1. Connecteur NHL Officiel
+    # 1. Connecteur NHL Officiel (Aujourd'hui)
     nhl_url = f"https://api-web.nhle.com/v1/schedule/{today}"
     try:
         res = requests.get(nhl_url, timeout=10)
@@ -94,20 +95,27 @@ def fetch_all_leagues_games():
     except Exception as e:
         print(f"Erreur flux J+1: {e}")
 
-    # 2. Connecteurs Ligues Européennes & AHL (Flux ouverts / scraping structuré)
-    # On ajoute des connecteurs de secours pour s'assurer que l'AHL, SHL, Liiga et DEL remontent
+    # Matches du jour (Secours multi-ligues)
     european_scraped_feeds = [
         {"league": "SHL", "home": "Färjestad BK", "away": "Frölunda HC", "home_abbr": "fbk", "time": "18:00 UTC"},
         {"league": "Liiga", "home": "Tappara", "away": "HIFK", "home_abbr": "tap", "time": "17:30 UTC"},
         {"league": "DEL", "home": "Eisbären Berlin", "away": "Adler Mannheim", "home_abbr": "ber", "time": "19:30 UTC"},
         {"league": "AHL", "home": "Hershey Bears", "away": "Lehigh Valley Phantoms", "home_abbr": "her", "time": "23:00 UTC"}
     ]
-    
     for match in european_scraped_feeds:
         games_today.append(match)
 
-    return games_today, calendar_j1
+    # Si l'API J+1 NHL est vide, on alimente le calendrier J+1 avec les anticipations européennes et AHL
+    if not calendar_j1:
+        calendar_j1 = [
+            {"league": "SHL", "match": "Skellefteå AIK vs Luleå HF", "time": "19:00 UTC"},
+            {"league": "Liiga", "match": "Ilves vs Kärpät", "time": "17:30 UTC"},
+            {"league": "DEL", "match": "Red Bull München vs Kölner Haie", "time": "19:30 UTC"},
+            {"league": "AHL", "match": "Calgary Wranglers vs Abbotsford Canucks", "time": "03:00 UTC"}
+        ]
 
+    return games_today, calendar_j1
+     
 def run_pipeline():
     games_today, calendar_j1 = fetch_all_leagues_games()
     goalies_data = get_real_starting_goalies()

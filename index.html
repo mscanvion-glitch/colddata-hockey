@@ -1,83 +1,104 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ColdData Hockey - Pro Terminal</title>
+  <title>ColdData Hockey | Pro Terminal</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+  </style>
 </head>
-<body class="bg-gray-950 text-gray-100 min-h-screen p-4 font-sans pb-16">
+<body class="bg-[#090D16] text-slate-100 min-h-screen p-4 pb-20 antialiased">
   <div class="max-w-md mx-auto space-y-4">
     
-    <!-- En-tête -->
-    <div class="flex justify-between items-center border-b border-gray-800 pb-3">
-      <div>
-        <h1 class="text-base font-bold text-white tracking-wide">ColdData Hockey</h1>
-        <span class="text-[10px] text-emerald-400" id="update-time">Chargement...</span>
-      </div>
-      <button onclick="toggleConfig()" class="bg-gray-900 border border-gray-800 px-3 py-1.5 rounded-lg text-xs font-semibold text-gray-300 hover:text-white">⚙️ Config</button>
-    </div>
-
-    <!-- Panneau de Configuration Intégré -->
-    <div id="config-panel" class="hidden bg-gray-900 border border-gray-800 p-3 rounded-xl space-y-3 text-xs">
-      <div class="font-bold text-white border-b border-gray-800 pb-1">Paramètres & Seuils Stricts</div>
-      <div class="grid grid-cols-2 gap-2">
+    <!-- En-tête Pro -->
+    <div class="flex justify-between items-center bg-slate-900/60 backdrop-blur-md border border-slate-800/80 p-3.5 rounded-2xl shadow-lg">
+      <div class="flex items-center space-x-2.5">
+        <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></div>
         <div>
-          <label class="text-gray-400">Seuil Tier 1</label>
-          <input type="number" id="cfg-t1" value="85" class="w-full bg-gray-950 border border-gray-800 p-1.5 rounded text-white mt-1">
-        </div>
-        <div>
-          <label class="text-gray-400">Seuil Tier 2</label>
-          <input type="number" id="cfg-t2" value="82" class="w-full bg-gray-950 border border-gray-800 p-1.5 rounded text-white mt-1">
-        </div>
-        <div>
-          <label class="text-gray-400">Seuil Tier 3</label>
-          <input type="number" id="cfg-t3" value="79" class="w-full bg-gray-950 border border-gray-800 p-1.5 rounded text-white mt-1">
-        </div>
-        <div>
-          <label class="text-gray-400">Corridor Max</label>
-          <input type="number" step="0.01" id="cfg-cmax" value="1.55" class="w-full bg-gray-950 border border-gray-800 p-1.5 rounded text-white mt-1">
+          <h1 class="text-sm font-bold tracking-tight text-white">COLDDATA <span class="text-emerald-400 font-light">HOCKEY</span></h1>
+          <span class="text-[10px] text-slate-400 mono" id="update-time">Sync en cours...</span>
         </div>
       </div>
-      <button onclick="saveConfig()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded">Enregistrer les réglages</button>
+      <button onclick="toggleConfig()" class="bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700/50 px-3 py-1.5 rounded-xl text-xs font-medium text-slate-300 transition flex items-center space-x-1.5">
+        <span>⚙️</span><span>Config</span>
+      </button>
     </div>
 
-    <!-- Navigation par Onglets (Grille 2x2 pour un affichage propre sur mobile & desktop) -->
-    <div class="grid grid-cols-2 gap-1.5 bg-gray-900 p-1.5 rounded-xl text-xs font-semibold">
-      <button onclick="showTab('valid')" id="btn-valid" class="py-2 text-center rounded-lg bg-emerald-600 text-white transition">Validés</button>
-      <button onclick="showTab('rejected')" id="btn-rejected" class="py-2 text-center rounded-lg text-gray-400 transition">Écartés</button>
-      <button onclick="showTab('calendar')" id="btn-calendar" class="py-2 text-center rounded-lg text-gray-400 transition">📅 Calendrier J+1</button>
-      <button onclick="showTab('audit')" id="btn-audit" class="py-2 text-center rounded-lg text-gray-400 transition">Audit / ROI</button>
+    <!-- Panneau de Configuration (Glassmorphism) -->
+    <div id="config-panel" class="hidden bg-slate-900/90 backdrop-blur-xl border border-slate-800 p-4 rounded-2xl space-y-3 shadow-2xl transition-all">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+        <span class="text-xs font-bold text-white uppercase tracking-wider">Paramètres & Seuils Stricts</span>
+        <button onclick="toggleConfig()" class="text-slate-400 hover:text-white text-xs">✕</button>
+      </div>
+      <div class="grid grid-cols-2 gap-3 text-xs">
+        <div>
+          <label class="text-slate-400 font-medium">Seuil Tier 1</label>
+          <input type="number" id="cfg-t1" value="85" class="w-full bg-slate-950 border border-slate-800 p-2 rounded-xl text-white mt-1 mono focus:border-emerald-500 outline-none">
+        </div>
+        <div>
+          <label class="text-slate-400 font-medium">Seuil Tier 2</label>
+          <input type="number" id="cfg-t2" value="82" class="w-full bg-slate-950 border border-slate-800 p-2 rounded-xl text-white mt-1 mono focus:border-emerald-500 outline-none">
+        </div>
+        <div>
+          <label class="text-slate-400 font-medium">Seuil Tier 3</label>
+          <input type="number" id="cfg-t3" value="79" class="w-full bg-slate-950 border border-slate-800 p-2 rounded-xl text-white mt-1 mono focus:border-emerald-500 outline-none">
+        </div>
+        <div>
+          <label class="text-slate-400 font-medium">Corridor Max</label>
+          <input type="number" step="0.01" id="cfg-cmax" value="1.55" class="w-full bg-slate-950 border border-slate-800 p-2 rounded-xl text-white mt-1 mono focus:border-emerald-500 outline-none">
+        </div>
+      </div>
+      <button onclick="saveConfig()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2.5 rounded-xl transition shadow-lg shadow-emerald-900/20 text-xs">Sauvegarder les modifications</button>
     </div>
 
-    <!-- Conteneurs des Onglets -->
+    <!-- Navigation par Onglets (Design Grille Pro) -->
+    <div class="grid grid-cols-2 gap-1.5 bg-slate-900/80 p-1.5 rounded-2xl border border-slate-800/80 text-xs font-medium">
+      <button onclick="switchTab('valid')" id="btn-valid" class="py-2.5 text-center rounded-xl bg-emerald-600 text-white shadow-md transition">Validés</button>
+      <button onclick="switchTab('rejected')" id="btn-rejected" class="py-2.5 text-center rounded-xl text-slate-400 hover:text-white transition">Écartés</button>
+      <button onclick="switchTab('calendar')" id="btn-calendar" class="py-2.5 text-center rounded-xl text-slate-400 hover:text-white transition">📅 Calendrier J+1</button>
+      <button onclick="switchTab('audit')" id="btn-audit" class="py-2.5 text-center rounded-xl text-slate-400 hover:text-white transition">📊 Audit / ROI</button>
+    </div>
+
+    <!-- Conteneurs -->
     <div id="tab-valid" class="space-y-3"></div>
     <div id="tab-rejected" class="space-y-3 hidden"></div>
     
-    <!-- Onglet Calendrier J+1 -->
+    <!-- Calendrier J+1 -->
     <div id="tab-calendar" class="space-y-3 hidden">
-      <div class="p-3.5 bg-gray-900 border border-gray-800 rounded-xl text-xs space-y-2">
-        <div class="font-bold text-white flex justify-between items-center text-sm">
-          <span>📅 Anticipation J+1</span>
-          <span class="text-emerald-400 bg-emerald-950/50 px-2 py-0.5 rounded border border-emerald-900">Flux actif</span>
+      <div class="bg-slate-900/80 border border-slate-800/80 p-4 rounded-2xl space-y-2.5 shadow-xl">
+        <div class="flex justify-between items-center text-xs font-bold text-white">
+          <span>📅 Anticipation & Flux J+1</span>
+          <span class="text-emerald-400 bg-emerald-950/60 border border-emerald-900/50 px-2 py-0.5 rounded-full text-[10px]">Actif</span>
         </div>
-        <p class="text-gray-400 text-[11px]">Ce module liste les prochaines affiches détectées en amont pour anticiper l'analyse des gardiens et des back-to-back avant l'ouverture des cotes.</p>
+        <p class="text-slate-400 text-[11px] leading-relaxed">Balayage préventif des affiches du lendemain pour anticiper la fatigue, les voyages et l'alignement des gardiens.</p>
         <div id="calendar-list" class="space-y-2 mt-2">
-          <!-- Injecté dynamiquement -->
-          <div class="p-2.5 bg-gray-950 rounded border border-gray-800 text-gray-300 flex justify-between items-center">
-            <span>Chargement des affiches futures...</span>
-          </div>
+          <div class="p-3 bg-slate-950/60 rounded-xl border border-slate-800 text-slate-400 text-xs text-center">Aucun match J+1 chargé dans le flux actuel.</div>
         </div>
       </div>
     </div>
 
-    <!-- Onglet Audit -->
+    <!-- Audit / ROI -->
     <div id="tab-audit" class="space-y-3 hidden">
-      <div class="p-4 bg-gray-900 border border-gray-800 rounded-xl space-y-2 text-xs">
-        <div class="font-bold text-white">Rapport d'Audit Global</div>
-        <div class="flex justify-between text-gray-400"><span>Taux de réussite global :</span> <span class="text-emerald-400 font-bold">-- %</span></div>
-        <div class="flex justify-between text-gray-400"><span>ROI net simulé :</span> <span class="text-emerald-400 font-bold">-- %</span></div>
-        <div class="flex justify-between text-gray-400"><span>Paris suivis :</span> <span class="text-white font-bold">0</span></div>
+      <div class="bg-slate-900/80 border border-slate-800/80 p-4 rounded-2xl space-y-3 shadow-xl">
+        <div class="text-xs font-bold text-white">Rapport de Performance Global</div>
+        <div class="grid grid-cols-2 gap-2 text-xs">
+          <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80 space-y-1">
+            <span class="text-slate-400 text-[10px] block">Winrate Global</span>
+            <span class="text-emerald-400 font-bold mono text-sm">-- %</span>
+          </div>
+          <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80 space-y-1">
+            <span class="text-slate-400 text-[10px] block">ROI Net Simulé</span>
+            <span class="text-emerald-400 font-bold mono text-sm">-- %</span>
+          </div>
+        </div>
+        <div class="flex justify-between items-center text-xs text-slate-400 px-1 pt-1">
+          <span>Total paris suivis par le bot :</span>
+          <span class="text-white font-bold mono">0</span>
+        </div>
       </div>
     </div>
 
@@ -89,17 +110,17 @@
     }
 
     function saveConfig() {
-      alert("Paramètres enregistrés en local !");
+      alert("Paramètres mis à jour avec succès !");
       toggleConfig();
     }
 
-    function showTab(tab) {
+    function switchTab(tab) {
       ['valid', 'rejected', 'calendar', 'audit'].forEach(t => {
         document.getElementById(`tab-${t}`).classList.add('hidden');
-        document.getElementById(`btn-${t}`).className = "py-2 text-center rounded-lg text-gray-400 transition";
+        document.getElementById(`btn-${t}`).className = "py-2.5 text-center rounded-xl text-slate-400 hover:text-white transition";
       });
       document.getElementById(`tab-${tab}`).classList.remove('hidden');
-      document.getElementById(`btn-${tab}`).className = "py-2 text-center rounded-lg bg-emerald-600 text-white transition font-bold";
+      document.getElementById(`btn-${tab}`).className = "py-2.5 text-center rounded-xl bg-emerald-600 text-white shadow-md transition font-semibold";
     }
 
     async function loadData() {
@@ -107,7 +128,7 @@
         const res = await fetch('data.json?t=' + Date.now());
         const data = await res.json();
         
-        document.getElementById('update-time').innerText = "Dernier scan : " + data.updated_at;
+        document.getElementById('update-time').innerText = "Sync : " + data.updated_at;
         
         const validDiv = document.getElementById('tab-valid');
         const rejectedDiv = document.getElementById('tab-rejected');
@@ -118,47 +139,79 @@
           const isValid = m.status.includes('VALIDÉE') || m.status.includes('VALUE') || m.status.includes('MODÉRÉ');
           
           const card = document.createElement('div');
-          card.className = "p-3.5 bg-gray-900 border border-gray-800 rounded-xl text-xs space-y-2";
+          card.className = "bg-slate-900/80 backdrop-blur-md border border-slate-800/80 p-4 rounded-2xl text-xs space-y-3 shadow-xl hover:border-slate-700 transition";
           
           if (isValid) {
             card.innerHTML = `
-              <div class="font-bold text-white flex justify-between items-center text-sm">
-                <span>${m.match}</span>
-                <span class="text-emerald-400 bg-emerald-950/50 px-2 py-0.5 rounded border border-emerald-900">@${m.cote}</span>
+              <div class="flex justify-between items-start">
+                <div>
+                  <span class="text-[10px] uppercase tracking-wider text-emerald-400 font-semibold bg-emerald-950/60 px-2 py-0.5 rounded-md border border-emerald-900/50">${m.league}</span>
+                  <h3 class="font-bold text-white text-sm mt-1">${m.match}</h3>
+                </div>
+                <div class="text-right">
+                  <span class="text-emerald-400 font-bold mono text-sm bg-emerald-950/40 px-2.5 py-1 rounded-xl border border-emerald-900/30">@${m.cote}</span>
+                  <span class="text-[10px] text-slate-400 block mt-1 mono">${m.time}</span>
+                </div>
               </div>
-              <div class="flex justify-between text-gray-400">
-                <span>Statut : <strong class="text-emerald-300">${m.status}</strong></span>
-                <span>Score : <strong class="text-white">${m.score}/100</strong></span>
+              
+              <div class="grid grid-cols-2 gap-2 bg-slate-950/50 p-2.5 rounded-xl border border-slate-800/50">
+                <div>
+                  <span class="text-[10px] text-slate-400 block">Statut Clinique</span>
+                  <strong class="text-emerald-300 text-[11px]">${m.status}</strong>
+                </div>
+                <div>
+                  <span class="text-[10px] text-slate-400 block">Score Global</span>
+                  <strong class="text-white text-[11px] mono">${m.score}/100</strong>
+                </div>
               </div>
-              <div class="text-gray-400">Gardien : <span class="text-gray-200">${m.gardien}</span> | Mise : <span class="text-emerald-400 font-bold">${m.stake_pct}%</span></div>
-              <div class="p-2 bg-gray-950 rounded border border-gray-800/80 text-gray-300 text-[11px] italic">"${m.analyse}"</div>
+
+              <div class="flex justify-between items-center text-[11px] text-slate-300 px-0.5">
+                <span>Gardien : <span class="text-white font-medium">${m.gardien}</span></span>
+                <span>Mise : <span class="text-emerald-400 font-bold mono">${m.stake_pct}%</span></span>
+              </div>
+
+              <div class="p-2.5 bg-slate-950/80 rounded-xl border border-slate-800/60 text-slate-300 text-[11px] italic leading-relaxed">
+                "${m.analyse}"
+              </div>
             `;
             validDiv.appendChild(card);
           } else {
             card.innerHTML = `
-              <div class="font-bold text-gray-300 flex justify-between items-center text-sm">
-                <span>${m.match}</span>
-                <span class="text-gray-500 bg-gray-950 px-2 py-0.5 rounded">@${m.cote}</span>
+              <div class="flex justify-between items-start">
+                <div>
+                  <span class="text-[10px] uppercase tracking-wider text-rose-400 font-semibold bg-rose-950/60 px-2 py-0.5 rounded-md border border-rose-900/50">${m.league}</span>
+                  <h3 class="font-bold text-slate-200 text-sm mt-1">${m.match}</h3>
+                </div>
+                <div class="text-right">
+                  <span class="text-slate-500 font-bold mono text-sm bg-slate-950 px-2.5 py-1 rounded-xl border border-slate-800">@${m.cote}</span>
+                  <span class="text-[10px] text-slate-500 block mt-1 mono">${m.time}</span>
+                </div>
               </div>
-              <div class="text-red-400 font-semibold">Motifs de rejet :</div>
-              <ul class="list-disc list-inside text-gray-400 text-[11px] space-y-0.5">
-                ${m.motifs.map(motiff => `<li>${motiff}</li>`).join('')}
-              </ul>
-              <div class="p-2 bg-gray-950 rounded border border-gray-800/80 text-gray-400 text-[11px] italic">"${m.analyse}"</div>
+
+              <div class="space-y-1 bg-slate-950/50 p-2.5 rounded-xl border border-slate-800/50">
+                <span class="text-[10px] text-rose-400 font-semibold uppercase tracking-wider block">Motifs de rejet :</span>
+                <ul class="list-disc list-inside text-slate-400 text-[11px] space-y-0.5">
+                  ${m.motifs.map(motiff => `<li>${motiff}</li>`).join('')}
+                </ul>
+              </div>
+
+              <div class="p-2.5 bg-slate-950/80 rounded-xl border border-slate-800/60 text-slate-400 text-[11px] italic leading-relaxed">
+                "${m.analyse}"
+              </div>
             `;
             rejectedDiv.appendChild(card);
           }
         });
 
         if (validDiv.children.length === 0) {
-          validDiv.innerHTML = '<p class="text-xs text-gray-500 text-center py-6">Aucun match validé pour le moment.</p>';
+          validDiv.innerHTML = '<div class="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-6 text-center text-xs text-slate-500">Aucun match validé par le filtre strict pour le moment.</div>';
         }
         if (rejectedDiv.children.length === 0) {
-          rejectedDiv.innerHTML = '<p class="text-xs text-gray-500 text-center py-6">Aucun match écarté.</p>';
+          rejectedDiv.innerHTML = '<div class="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-6 text-center text-xs text-slate-500">Aucun match écarté pour le moment.</div>';
         }
 
       } catch (e) {
-        document.getElementById('update-time').innerText = "Erreur de chargement du flux";
+        document.getElementById('update-time').innerText = "Erreur de sync flux";
       }
     }
 

@@ -1,28 +1,34 @@
 {
-  "updated_at": "21/10/2026 20:00:14",
+  "updated_at": "21/10/2026 20:16:37",
   "total_scanned": 2,
   "results": [
     {
       "match": "Sabres vs Flyers",
       "league": "NHL",
       "time": "23:30 UTC",
-      "cote": 1.42,
-      "score": 86.0,
-      "status": "PÉPITE VALIDÉE (TIER 1)",
-      "motifs": [],
-      "stake_pct": 15,
-      "gardien": "Gardien Annoncé"
+      "cote": 0.0,
+      "score": 78.0,
+      "status": "REJETÉ",
+      "motifs": [
+        "Cote réelle absente (Vérifier ODDS_API_KEY)",
+        "Gardien non confirmé (Non communiqué)"
+      ],
+      "stake_pct": 0,
+      "gardien": "Non communiqué"
     },
     {
       "match": "Senators vs Panthers",
       "league": "NHL",
       "time": "23:30 UTC",
-      "cote": 1.42,
-      "score": 86.0,
-      "status": "PÉPITE VALIDÉE (TIER 1)",
-      "motifs": [],
-      "stake_pct": 15,
-      "gardien": "Gardien Annoncé"
+      "cote": 0.0,
+      "score": 69.6,
+      "status": "REJETÉ",
+      "motifs": [
+        "Cote réelle absente (Vérifier ODDS_API_KEY)",
+        "Gardien non confirmé (Non communiqué)"
+      ],
+      "stake_pct": 0,
+      "gardien": "Non communiqué"
     }
   ]
 }

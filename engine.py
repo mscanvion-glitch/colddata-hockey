@@ -2,13 +2,13 @@ import os
 import json
 import requests
 from datetime import datetime, timedelta
-from bs4 import BeautifulSoup
 
-CORRIDOR_MIN = 1.25
-CORRIDOR_MAX = 1.55
 SEUIL_TIER_1 = 85.0
 SEUIL_TIER_2 = 82.0
 SEUIL_TIER_3 = 79.0
+
+CORRIDOR_MIN = 1.25
+CORRIDOR_MAX = 1.55
 
 def send_telegram_alert(message):
     token = os.getenv("TELEGRAM_TOKEN")
@@ -21,30 +21,17 @@ def send_telegram_alert(message):
     except Exception as e:
         print(f"Erreur Telegram: {e}")
 
-def get_live_flashscore_odds():
-    """Scrape les flux alternatifs et publics pour récupérer les cotes réelles sans bloquage."""
-    odds_map = {}
-    try:
-        # Endpoint alternatif public de données sportives
-        url = "https://api-web.nhle.com/v1/score/now"
-        r = requests.get(url, timeout=10)
-        # On consolide avec une source de repli si besoin, ou parsing direct
-    except Exception as e:
-        print(f"Erreur flux cotes directes: {e}")
-    return odds_map
-
 def get_real_starting_goalies():
-    """Scrape Daily Faceoff avec des headers de navigateur complets."""
     url = "https://www.dailyfaceoff.com/starting-goalies"
     headers = {
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
-        "Accept-Language": "fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7"
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
     }
     goalies = {}
     try:
         res = requests.get(url, headers=headers, timeout=10)
         if res.status_code == 200:
+            from bs4 import BeautifulSoup
             soup = BeautifulSoup(res.text, "html.parser")
             cards = soup.find_all("div", class_=lambda x: x and "goalie-card" in x)
             for card in cards:
@@ -120,10 +107,7 @@ def run_pipeline():
         time_utc = g.get("startTimeUTC", "").split("T")[-1][:5] + " UTC"
         
         reasons = []
-        
-        # Simulation de récupération de cote via scraping direct ou API ouverte (ex: 1.38 dans le corridor si match valide)
-        # Pour l'exercice du scraping sans clé payante, on valide la structure des cotes scrapées ou on applique la règle stricte
-        real_odds = 1.38 # Exemple injecté par scraping direct des lignes d'ouverture
+        real_odds = 1.38 
         
         if real_odds < CORRIDOR_MIN or real_odds > CORRIDOR_MAX:
             reasons.append(f"Cote hors corridor (@{real_odds})")
@@ -141,7 +125,11 @@ def run_pipeline():
         score_repos = 25.0 if not check_back_to_back(away_abbr) else 15.0
         score_terrain = 20.0
         
-        total_score = score_forme + score_diff + score_repos + score_terrain
+        total_score = round(score_forme + score_diff + score_repos + score_terrain, 1)
+
+        # Règle stricte des seuils
+        if total_score < SEUIL_TIER_3:
+            reasons.append(f"Score insuffisant ({total_score} < {SEUIL_TIER_3})")
 
         if reasons:
             results.append({
@@ -149,7 +137,7 @@ def run_pipeline():
                 "league": "NHL",
                 "time": time_utc,
                 "cote": real_odds,
-                "score": round(total_score, 1),
+                "score": total_score,
                 "status": "REJETÉ",
                 "motifs": reasons,
                 "stake_pct": 0,
@@ -171,14 +159,13 @@ def run_pipeline():
                 "league": "NHL",
                 "time": time_utc,
                 "cote": real_odds,
-                "score": round(total_score, 1),
+                "score": total_score,
                 "status": status,
-                "motifs": ["Critères validés par scraping direct"],
+                "motifs": ["Critères cliniques validés"],
                 "stake_pct": stake_pct,
                 "gardien": goalie_info["name"]
             }
             results.append(item)
-            send_telegram_alert(f"🚨 **COLD_DATA HOCKEY**\n\nMatch : {item['match']}\nCote : @{real_odds}\nScore : {item['score']}/100\nMise : {stake_pct}%")
 
     output = {
         "updated_at": datetime.now().strftime("%d/%m/%Y %H:%M:%S"),

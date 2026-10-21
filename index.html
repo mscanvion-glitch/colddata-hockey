@@ -49,19 +49,19 @@
         VALIDÉS (<span id="count-valid">0</span>)
       </button>
       <button onclick="switchTab('rejected')" id="tab-rejected" class="flex-1 py-2 text-center text-gray-500">
-        REJETÉS (<span id="count-rejected">0</span>)
+        ÉCARTÉS (<span id="count-rejected">0</span>)
       </button>
       <button onclick="switchTab('history')" id="tab-history" class="flex-1 py-2 text-center text-gray-500">
         HISTORIQUE
       </button>
     </div>
 
-    <!-- VUE 1 : Matchs Validés -->
+    <!-- VUE 1 : Validés -->
     <div id="view-valid" class="space-y-3">
       <div id="valid-cards" class="space-y-3"></div>
     </div>
 
-    <!-- VUE 2 : Matchs Rejetés -->
+    <!-- VUE 2 : Écartés (Rejetés) -->
     <div id="view-rejected" class="space-y-2 hidden">
       <div id="rejected-cards" class="space-y-2"></div>
     </div>
@@ -88,7 +88,7 @@
   </div>
 
   <script>
-    const USD_TO_EUR = 0.92; // Taux de conversion de référence
+    const USD_TO_EUR = 0.92;
     let currentData = null;
     let historyData = JSON.parse(localStorage.getItem('colddata_history') || '[]');
 
@@ -120,7 +120,7 @@
         document.getElementById('last-update').innerText = "Scan : " + data.updated_at;
         renderAll(data);
       } catch (err) {
-        document.getElementById('valid-cards').innerHTML = `<p class="text-xs text-red-400 text-center py-4">data.json introuvable.</p>`;
+        document.getElementById('valid-cards').innerHTML = `<p class="text-xs text-red-400 text-center py-4">En attente de données...</p>`;
       }
     }
 
@@ -136,7 +136,7 @@
       let validCount = 0;
       let rejectedCount = 0;
 
-      data.results.forEach((m, idx) => {
+      data.results.forEach((m) => {
         const isValid = m.status.includes('VALIDÉE') || m.status.includes('VALUE') || m.status.includes('MODÉRÉ');
         
         if (isValid) {
@@ -149,106 +149,17 @@
           card.innerHTML = `
             <div class="flex justify-between items-start">
               <div>
-                <span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800/60">${m.league} • ${m.time}</span>
+                <span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800/60">${m.league} •${m.time}</span>
                 <h3 class="text-sm font-bold text-white mt-1">${m.match}</h3>
                 <p class="text-[10px] text-gray-400">Gardien : ${m.gardien}</p>
               </div>
               <div class="text-right font-mono">
                 <span class="text-xs font-bold text-emerald-400">@${m.cote.toFixed(2)}</span>
-                <p class="text-[9px] text-gray-500">${m.score.toFixed(1)}/100</p>
+                <p class="text-[9px] text-gray-500">${m.score}/100</p>
               </div>
             </div>
             <div class="pt-2 border-t border-gray-800/80 flex justify-between items-center text-xs">
               <span class="text-emerald-400 text-[11px]">Mise (${m.stake_pct}%) :</span>
-              <span class="font-mono text-white text-[11px] font-semibold">${miseW} € (W) / ${miseP} $ (P)</span>
+              <span class="font-mono text-white text-[11px] font-semibold">${miseW} € (W) / ${miseP}$ (P)</span>
             </div>
-            <button onclick="logBet('${m.match.replace(/'/g, "\\'")}', ${m.cote}, ${miseW})" class="w-full py-1 bg-gray-800 hover:bg-gray-700 text-gray-300 text-[10px] rounded font-medium transition">
-              + Ajouter à l'historique
-            </button>
-          `;
-          validContainer.appendChild(card);
-        } else {
-          rejectedCount++;
-          const card = document.createElement('div');
-          card.className = "p-2.5 rounded-lg border bg-gray-950/40 border-gray-900 opacity-70 text-xs";
-          card.innerHTML = `
-            <div class="flex justify-between items-center">
-              <span class="font-bold text-gray-300 text-[11px]">${m.match}</span>
-              <span class="text-[10px] font-mono text-gray-500">@${m.cote.toFixed(2)}</span>
-            </div>
-            <div class="mt-1 text-[10px] text-red-400/80 space-y-0.5">
-              ${m.motifs.map(mot => `<div>• ${mot}</div>`).join('')}
-            </div>
-          `;
-          rejectedContainer.appendChild(card);
-        }
-      });
-
-      document.getElementById('count-valid').innerText = validCount;
-      document.getElementById('count-rejected').innerText = rejectedCount;
-      renderHistory();
-    }
-
-    function logBet(match, cote, mise) {
-      historyData.unshift({ id: Date.now(), match, cote, mise: parseFloat(mise), result: 'pending' });
-      localStorage.setItem('colddata_history', JSON.stringify(historyData));
-      renderHistory();
-      switchTab('history');
-    }
-
-    function resolveBet(id, status) {
-      const bet = historyData.find(b => b.id === id);
-      if (bet) {
-        bet.result = status;
-        localStorage.setItem('colddata_history', JSON.stringify(historyData));
-        renderHistory();
-      }
-    }
-
-    function renderHistory() {
-      const container = document.getElementById('history-items');
-      container.innerHTML = '';
-
-      let settled = historyData.filter(b => b.result !== 'pending');
-      let wins = settled.filter(b => b.result === 'win').length;
-      let profit = 0;
-
-      settled.forEach(b => {
-        if (b.result === 'win') profit += (b.mise * (b.cote - 1));
-        if (b.result === 'loss') profit -= b.mise;
-      });
-
-      document.getElementById('stat-total').innerText = historyData.length;
-      document.getElementById('stat-winrate').innerText = settled.length ? ((wins / settled.length) * 100).toFixed(0) + " %" : "0 %";
-      document.getElementById('stat-profit').innerText = (profit >= 0 ? "+" : "") + profit.toFixed(2) + " €";
-
-      historyData.forEach(b => {
-        const item = document.createElement('div');
-        item.className = "p-2 bg-gray-900/60 border border-gray-800 rounded-lg flex justify-between items-center";
-        item.innerHTML = `
-          <div>
-            <div class="font-bold text-white text-[11px]">${b.match}</div>
-            <div class="text-[9px] text-gray-500 font-mono">Mise: ${b.mise} € • Cote: @${b.cote}</div>
-          </div>
-          <div class="flex items-center gap-1 font-mono text-[10px]">
-            ${b.result === 'pending' ? `
-              <button onclick="resolveBet(${b.id}, 'win')" class="px-2 py-0.5 bg-emerald-950 text-emerald-400 border border-emerald-800 rounded">G</button>
-              <button onclick="resolveBet(${b.id}, 'loss')" class="px-2 py-0.5 bg-red-950 text-red-400 border border-red-800 rounded">P</button>
-            ` : `
-              <span class="${b.result === 'win' ? 'text-emerald-400' : 'text-red-400'} font-bold uppercase">${b.result}</span>
-            `}
-          </div>
-        `;
-        container.appendChild(item);
-      });
-    }
-
-    const savedW = localStorage.getItem('colddata_w');
-    const savedP = localStorage.getItem('colddata_p');
-    if (savedW) document.getElementById('winamax-val').value = savedW;
-    if (savedP) document.getElementById('poly-val').value = savedP;
-    saveAndRefresh();
-    loadReport();
-  </script>
-</body>
-</html>
+            <button onclick

@@ -1,0 +1,38 @@
+name: ColdData Hockey Auto-Scanner
+
+on:
+  schedule:
+    # Plages optimisées : matin Europe, fin d'après-midi et fenêtre critique gardiens NHL (UTC)
+    - cron: '30 6,9,13,14,15,17,18,19,20,21,22,23 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  scan-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupération du code
+        uses: actions/checkout@v4
+
+      - name: Configuration de Python
+        uses: setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Installation des modules
+        run: pip install requests beautifulsoup4
+
+      - name: Exécution du moteur d'analyse
+        env:
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+        run: python engine.py
+
+      - name: Publication automatique du rapport data.json
+        run: |
+          git config --global user.name "ColdData Bot"
+          git config --global user.email "bot@colddata.local"
+          git add data.json
+          git commit -m "Auto-update ColdData report [skip ci]" || exit 0
+          git push

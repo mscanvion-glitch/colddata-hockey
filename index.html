@@ -42,16 +42,36 @@
       <button onclick="saveConfig()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded">Enregistrer les réglages</button>
     </div>
 
-    <!-- Navigation par Onglets -->
-    <div class="flex bg-gray-900 rounded-xl p-1 text-xs font-semibold">
-      <button onclick="showTab('valid')" id="btn-valid" class="flex-1 py-2 text-center rounded-lg bg-emerald-600 text-white transition">Validés</button>
-      <button onclick="showTab('rejected')" id="btn-rejected" class="flex-1 py-2 text-center rounded-lg text-gray-400 transition">Écartés</button>
-      <button onclick="showTab('audit')" id="btn-audit" class="flex-1 py-2 text-center rounded-lg text-gray-400 transition">Audit / ROI</button>
+    <!-- Navigation par Onglets (Grille 2x2 pour un affichage propre sur mobile & desktop) -->
+    <div class="grid grid-cols-2 gap-1.5 bg-gray-900 p-1.5 rounded-xl text-xs font-semibold">
+      <button onclick="showTab('valid')" id="btn-valid" class="py-2 text-center rounded-lg bg-emerald-600 text-white transition">Validés</button>
+      <button onclick="showTab('rejected')" id="btn-rejected" class="py-2 text-center rounded-lg text-gray-400 transition">Écartés</button>
+      <button onclick="showTab('calendar')" id="btn-calendar" class="py-2 text-center rounded-lg text-gray-400 transition">📅 Calendrier J+1</button>
+      <button onclick="showTab('audit')" id="btn-audit" class="py-2 text-center rounded-lg text-gray-400 transition">Audit / ROI</button>
     </div>
 
-    <!-- Conteneurs -->
+    <!-- Conteneurs des Onglets -->
     <div id="tab-valid" class="space-y-3"></div>
     <div id="tab-rejected" class="space-y-3 hidden"></div>
+    
+    <!-- Onglet Calendrier J+1 -->
+    <div id="tab-calendar" class="space-y-3 hidden">
+      <div class="p-3.5 bg-gray-900 border border-gray-800 rounded-xl text-xs space-y-2">
+        <div class="font-bold text-white flex justify-between items-center text-sm">
+          <span>📅 Anticipation J+1</span>
+          <span class="text-emerald-400 bg-emerald-950/50 px-2 py-0.5 rounded border border-emerald-900">Flux actif</span>
+        </div>
+        <p class="text-gray-400 text-[11px]">Ce module liste les prochaines affiches détectées en amont pour anticiper l'analyse des gardiens et des back-to-back avant l'ouverture des cotes.</p>
+        <div id="calendar-list" class="space-y-2 mt-2">
+          <!-- Injecté dynamiquement -->
+          <div class="p-2.5 bg-gray-950 rounded border border-gray-800 text-gray-300 flex justify-between items-center">
+            <span>Chargement des affiches futures...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Onglet Audit -->
     <div id="tab-audit" class="space-y-3 hidden">
       <div class="p-4 bg-gray-900 border border-gray-800 rounded-xl space-y-2 text-xs">
         <div class="font-bold text-white">Rapport d'Audit Global</div>
@@ -74,12 +94,12 @@
     }
 
     function showTab(tab) {
-      ['valid', 'rejected', 'audit'].forEach(t => {
+      ['valid', 'rejected', 'calendar', 'audit'].forEach(t => {
         document.getElementById(`tab-${t}`).classList.add('hidden');
-        document.getElementById(`btn-${t}`).className = "flex-1 py-2 text-center rounded-lg text-gray-400 transition";
+        document.getElementById(`btn-${t}`).className = "py-2 text-center rounded-lg text-gray-400 transition";
       });
       document.getElementById(`tab-${tab}`).classList.remove('hidden');
-      document.getElementById(`btn-${tab}`).className = "flex-1 py-2 text-center rounded-lg bg-emerald-600 text-white transition font-bold";
+      document.getElementById(`btn-${tab}`).className = "py-2 text-center rounded-lg bg-emerald-600 text-white transition font-bold";
     }
 
     async function loadData() {

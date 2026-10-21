@@ -115,7 +115,7 @@
 async function loadReport() {
       try {
         // Remplace par l'URL directe de ton fichier data.json sur ton GitHub Pages
-        const res = await fetch('https://mscandion-glitch.github.io/colddata-hockey/data.json?t=' + Date.now());
+        const res = await fetch('https://mscanvion-glitch.github.io/colddata-hockey/data.json?t=' + Date.now());
         const data = await res.json();
         currentData = data;
         document.getElementById('last-update').innerText = "Scan : " + data.updated_at;

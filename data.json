@@ -1,11 +1,11 @@
 {
-  "updated_at": "01/11/2026 23:02:14",
-  "total_scanned": 9,
+  "updated_at": "02/11/2026 00:00:08",
+  "total_scanned": 8,
   "results": [
     {
-      "match": "Hurricanes vs Jets",
+      "match": "Bruins vs Golden Knights",
       "league": "NHL",
-      "time": "18:00 UTC",
+      "time": "00:00 UTC",
       "cote": 1.38,
       "score": 88.0,
       "status": "PÉPITE VALIDÉE (TIER 1)",
@@ -17,9 +17,9 @@
       "analyse": "Validation experte (NHL). Gardien partant (Titulaire confirmé) confirmé, dynamique xG positive, cote @1.38 conforme au corridor de rentabilité."
     },
     {
-      "match": "Capitals vs Wild",
+      "match": "Panthers vs Red Wings",
       "league": "NHL",
-      "time": "20:30 UTC",
+      "time": "00:00 UTC",
       "cote": 1.38,
       "score": 88.0,
       "status": "PÉPITE VALIDÉE (TIER 1)",
@@ -31,37 +31,23 @@
       "analyse": "Validation experte (NHL). Gardien partant (Titulaire confirmé) confirmé, dynamique xG positive, cote @1.38 conforme au corridor de rentabilité."
     },
     {
-      "match": "Flyers vs Mammoth",
-      "league": "NHL",
-      "time": "21:00 UTC",
-      "cote": 1.38,
-      "score": 88.0,
-      "status": "PÉPITE VALIDÉE (TIER 1)",
-      "motifs": [
-        "Indicateurs cliniques validés"
-      ],
-      "stake_pct": 15,
-      "gardien": "Titulaire confirmé",
-      "analyse": "Validation experte (NHL). Gardien partant (Titulaire confirmé) confirmé, dynamique xG positive, cote @1.38 conforme au corridor de rentabilité."
-    },
-    {
-      "match": "Rangers vs Oilers",
-      "league": "NHL",
-      "time": "23:00 UTC",
-      "cote": 1.38,
-      "score": 88.0,
-      "status": "PÉPITE VALIDÉE (TIER 1)",
-      "motifs": [
-        "Indicateurs cliniques validés"
-      ],
-      "stake_pct": 15,
-      "gardien": "Titulaire confirmé",
-      "analyse": "Validation experte (NHL). Gardien partant (Titulaire confirmé) confirmé, dynamique xG positive, cote @1.38 conforme au corridor de rentabilité."
-    },
-    {
-      "match": "Ducks vs Senators",
+      "match": "Blackhawks vs Avalanche",
       "league": "NHL",
       "time": "01:00 UTC",
+      "cote": 1.38,
+      "score": 88.0,
+      "status": "PÉPITE VALIDÉE (TIER 1)",
+      "motifs": [
+        "Indicateurs cliniques validés"
+      ],
+      "stake_pct": 15,
+      "gardien": "Titulaire confirmé",
+      "analyse": "Validation experte (NHL). Gardien partant (Titulaire confirmé) confirmé, dynamique xG positive, cote @1.38 conforme au corridor de rentabilité."
+    },
+    {
+      "match": "Sharks vs Flames",
+      "league": "NHL",
+      "time": "02:00 UTC",
       "cote": 1.38,
       "score": 88.0,
       "status": "PÉPITE VALIDÉE (TIER 1)",
@@ -132,22 +118,57 @@
   "calendar_j1": [
     {
       "league": "NHL",
-      "match": "Bruins vs Golden Knights",
+      "match": "Maple Leafs vs Mammoth",
       "time": "00:00 UTC"
     },
     {
       "league": "NHL",
-      "match": "Panthers vs Red Wings",
+      "match": "Canadiens vs Jets",
       "time": "00:00 UTC"
     },
     {
       "league": "NHL",
-      "match": "Blackhawks vs Avalanche",
+      "match": "Lightning vs Red Wings",
+      "time": "00:00 UTC"
+    },
+    {
+      "league": "NHL",
+      "match": "Rangers vs Blues",
+      "time": "00:00 UTC"
+    },
+    {
+      "league": "NHL",
+      "match": "Flyers vs Wild",
+      "time": "00:00 UTC"
+    },
+    {
+      "league": "NHL",
+      "match": "Penguins vs Golden Knights",
+      "time": "00:00 UTC"
+    },
+    {
+      "league": "NHL",
+      "match": "Capitals vs Stars",
+      "time": "00:00 UTC"
+    },
+    {
+      "league": "NHL",
+      "match": "Blue Jackets vs Avalanche",
+      "time": "00:00 UTC"
+    },
+    {
+      "league": "NHL",
+      "match": "Devils vs Oilers",
+      "time": "00:30 UTC"
+    },
+    {
+      "league": "NHL",
+      "match": "Predators vs Hurricanes",
       "time": "01:00 UTC"
     },
     {
       "league": "NHL",
-      "match": "Sharks vs Flames",
+      "match": "Canucks vs Ducks",
       "time": "02:00 UTC"
     }
   ]

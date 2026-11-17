@@ -1,9 +1,79 @@
 {
-  "updated_at": "16/11/2026 23:14:43",
-  "total_scanned": 6,
+  "updated_at": "17/11/2026 00:13:09",
+  "total_scanned": 15,
   "results": [
     {
-      "match": "Rangers vs Canadiens",
+      "match": "Bruins vs Kings",
+      "league": "NHL",
+      "time": "00:00 UTC",
+      "cote": 1.38,
+      "score": 88.0,
+      "status": "PÉPITE VALIDÉE (TIER 1)",
+      "motifs": [
+        "Indicateurs cliniques validés"
+      ],
+      "stake_pct": 15,
+      "gardien": "Titulaire confirmé",
+      "analyse": "Validation experte (NHL). Gardien partant (Titulaire confirmé) confirmé, dynamique xG positive, cote @1.38 conforme au corridor de rentabilité."
+    },
+    {
+      "match": "Panthers vs Oilers",
+      "league": "NHL",
+      "time": "00:00 UTC",
+      "cote": 1.38,
+      "score": 88.0,
+      "status": "PÉPITE VALIDÉE (TIER 1)",
+      "motifs": [
+        "Indicateurs cliniques validés"
+      ],
+      "stake_pct": 15,
+      "gardien": "Titulaire confirmé",
+      "analyse": "Validation experte (NHL). Gardien partant (Titulaire confirmé) confirmé, dynamique xG positive, cote @1.38 conforme au corridor de rentabilité."
+    },
+    {
+      "match": "Islanders vs Blue Jackets",
+      "league": "NHL",
+      "time": "00:00 UTC",
+      "cote": 1.38,
+      "score": 88.0,
+      "status": "PÉPITE VALIDÉE (TIER 1)",
+      "motifs": [
+        "Indicateurs cliniques validés"
+      ],
+      "stake_pct": 15,
+      "gardien": "Titulaire confirmé",
+      "analyse": "Validation experte (NHL). Gardien partant (Titulaire confirmé) confirmé, dynamique xG positive, cote @1.38 conforme au corridor de rentabilité."
+    },
+    {
+      "match": "Flyers vs Sabres",
+      "league": "NHL",
+      "time": "00:00 UTC",
+      "cote": 1.38,
+      "score": 88.0,
+      "status": "PÉPITE VALIDÉE (TIER 1)",
+      "motifs": [
+        "Indicateurs cliniques validés"
+      ],
+      "stake_pct": 15,
+      "gardien": "Titulaire confirmé",
+      "analyse": "Validation experte (NHL). Gardien partant (Titulaire confirmé) confirmé, dynamique xG positive, cote @1.38 conforme au corridor de rentabilité."
+    },
+    {
+      "match": "Jets vs Senators",
+      "league": "NHL",
+      "time": "00:00 UTC",
+      "cote": 1.38,
+      "score": 88.0,
+      "status": "PÉPITE VALIDÉE (TIER 1)",
+      "motifs": [
+        "Indicateurs cliniques validés"
+      ],
+      "stake_pct": 15,
+      "gardien": "Titulaire confirmé",
+      "analyse": "Validation experte (NHL). Gardien partant (Titulaire confirmé) confirmé, dynamique xG positive, cote @1.38 conforme au corridor de rentabilité."
+    },
+    {
+      "match": "Lightning vs Capitals",
       "league": "NHL",
       "time": "00:30 UTC",
       "cote": 1.38,
@@ -17,9 +87,65 @@
       "analyse": "Validation experte (NHL). Gardien partant (Titulaire confirmé) confirmé, dynamique xG positive, cote @1.38 conforme au corridor de rentabilité."
     },
     {
-      "match": "Mammoth vs Canucks",
+      "match": "Blackhawks vs Maple Leafs",
       "league": "NHL",
-      "time": "02:30 UTC",
+      "time": "00:30 UTC",
+      "cote": 1.38,
+      "score": 88.0,
+      "status": "PÉPITE VALIDÉE (TIER 1)",
+      "motifs": [
+        "Indicateurs cliniques validés"
+      ],
+      "stake_pct": 15,
+      "gardien": "Titulaire confirmé",
+      "analyse": "Validation experte (NHL). Gardien partant (Titulaire confirmé) confirmé, dynamique xG positive, cote @1.38 conforme au corridor de rentabilité."
+    },
+    {
+      "match": "Blues vs Ducks",
+      "league": "NHL",
+      "time": "01:00 UTC",
+      "cote": 1.38,
+      "score": 88.0,
+      "status": "PÉPITE VALIDÉE (TIER 1)",
+      "motifs": [
+        "Indicateurs cliniques validés"
+      ],
+      "stake_pct": 15,
+      "gardien": "Titulaire confirmé",
+      "analyse": "Validation experte (NHL). Gardien partant (Titulaire confirmé) confirmé, dynamique xG positive, cote @1.38 conforme au corridor de rentabilité."
+    },
+    {
+      "match": "Wild vs Predators",
+      "league": "NHL",
+      "time": "01:00 UTC",
+      "cote": 1.38,
+      "score": 88.0,
+      "status": "PÉPITE VALIDÉE (TIER 1)",
+      "motifs": [
+        "Indicateurs cliniques validés"
+      ],
+      "stake_pct": 15,
+      "gardien": "Titulaire confirmé",
+      "analyse": "Validation experte (NHL). Gardien partant (Titulaire confirmé) confirmé, dynamique xG positive, cote @1.38 conforme au corridor de rentabilité."
+    },
+    {
+      "match": "Golden Knights vs Stars",
+      "league": "NHL",
+      "time": "03:00 UTC",
+      "cote": 1.38,
+      "score": 88.0,
+      "status": "PÉPITE VALIDÉE (TIER 1)",
+      "motifs": [
+        "Indicateurs cliniques validés"
+      ],
+      "stake_pct": 15,
+      "gardien": "Titulaire confirmé",
+      "analyse": "Validation experte (NHL). Gardien partant (Titulaire confirmé) confirmé, dynamique xG positive, cote @1.38 conforme au corridor de rentabilité."
+    },
+    {
+      "match": "Sharks vs Flames",
+      "league": "NHL",
+      "time": "03:00 UTC",
       "cote": 1.38,
       "score": 88.0,
       "status": "PÉPITE VALIDÉE (TIER 1)",
@@ -90,57 +216,17 @@
   "calendar_j1": [
     {
       "league": "NHL",
-      "match": "Bruins vs Kings",
-      "time": "00:00 UTC"
-    },
-    {
-      "league": "NHL",
-      "match": "Panthers vs Oilers",
-      "time": "00:00 UTC"
-    },
-    {
-      "league": "NHL",
-      "match": "Islanders vs Blue Jackets",
-      "time": "00:00 UTC"
-    },
-    {
-      "league": "NHL",
-      "match": "Flyers vs Sabres",
-      "time": "00:00 UTC"
-    },
-    {
-      "league": "NHL",
-      "match": "Jets vs Senators",
-      "time": "00:00 UTC"
-    },
-    {
-      "league": "NHL",
-      "match": "Lightning vs Capitals",
+      "match": "Red Wings vs Bruins",
       "time": "00:30 UTC"
     },
     {
       "league": "NHL",
-      "match": "Blackhawks vs Maple Leafs",
+      "match": "Devils vs Canadiens",
       "time": "00:30 UTC"
     },
     {
       "league": "NHL",
-      "match": "Blues vs Ducks",
-      "time": "01:00 UTC"
-    },
-    {
-      "league": "NHL",
-      "match": "Wild vs Predators",
-      "time": "01:00 UTC"
-    },
-    {
-      "league": "NHL",
-      "match": "Golden Knights vs Stars",
-      "time": "03:00 UTC"
-    },
-    {
-      "league": "NHL",
-      "match": "Sharks vs Flames",
+      "match": "Mammoth vs Avalanche",
       "time": "03:00 UTC"
     }
   ]
